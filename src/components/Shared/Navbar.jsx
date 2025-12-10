@@ -12,8 +12,10 @@ import {
 import { NavLink, Link } from "react-router";
 import Logo from "./Logo";
 import useAuth from "../../hooks/useAuth";
+import toast from "react-hot-toast";
+import Swal from "sweetalert2";
 
-const UserDropdown = ({ user }) => {
+const UserDropdown = ({ user, handleLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -88,7 +90,10 @@ const UserDropdown = ({ user }) => {
 
           {/* Footer with Logout */}
           <div className="border-t border-dashed border-[#D4DEC9]/50 pt-2 mt-1 px-2">
-            <button className="flex w-full items-center px-2 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer">
+             <button
+              onClick={handleLogout}
+              className="flex w-full items-center px-2 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+            >
               <LogOut size={16} className="mr-3 " />
               Sign Out
             </button>
@@ -102,9 +107,34 @@ const UserDropdown = ({ user }) => {
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-   const { user } = useAuth();
+   const { user, logoutUser } = useAuth();
 
-  
+  const handleLogout = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#7d9483",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, sign out!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        logoutUser()
+          .then(() => {
+            Swal.fire({
+              title: "Signed Out!",
+              text: "Your have been signed out.",
+              icon: "success",
+              confirmButtonColor: "#7d9483",
+            });
+          })
+          .catch((err) => {
+            toast.error(err.message);
+          });
+      }
+    });
+  };
   useEffect(() => {
    const handleScroll = () => setIsScrolled(window.scrollY > 20);
 
@@ -153,7 +183,7 @@ const Navbar = () => {
             <div className="h-6 w-px bg-[#D4DEC9]"></div>
 
             {user ? (
-              <UserDropdown user={user} />
+              <UserDropdown user={user} handleLogout={handleLogout} />
             ) : (
               <>
                 <Link
@@ -164,7 +194,7 @@ const Navbar = () => {
                    Sign In
                 </Link>
                 <Link
-                  to="/auth/registration"
+                  to="/auth/register"
                   className="btn bg-[#2C3E2E] hover:bg-[#4F6F52] text-white border-none btn-sm px-5 rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2"
                 >
                   <PenTool className="w-4 h-4" />
@@ -253,7 +283,10 @@ const Navbar = () => {
                 >
                   <LayoutDashboard size={16} /> Dashboard
                 </Link>
-                <button className="btn bg-red-50 text-red-600 hover:bg-red-100 border-none w-full rounded-full flex items-center justify-center gap-2">
+                 <button
+                  onClick={handleLogout}
+                  className="btn bg-red-50 text-red-600 hover:bg-red-100 border-none w-full rounded-full flex items-center justify-center gap-2"
+                >
                   <LogOut className="w-4 h-4" /> Sign Out
                 </button>
               </>
@@ -267,7 +300,7 @@ const Navbar = () => {
                   Sign In
                 </Link>
                 <Link
-                  to="/auth/registration"
+                  to="/auth/register"
                   className="btn bg-[#4F6F52] hover:bg-[#3A523C] text-white border-none w-full rounded-full shadow-md flex items-center justify-center gap-2"
                 >
                   <PenTool className="w-4 h-4" /> Write a Lesson

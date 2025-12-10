@@ -4,6 +4,7 @@ import Home from "../pages/Home";
 import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
+import PublicLessons from "../pages/PublicLessons";
 
 export const router = createBrowserRouter([
   {
@@ -13,6 +14,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: <Home />,
+      },
+       {
+        path: "public-lessons",
+        element: <PublicLessons />,
       },
     ],
   },

@@ -11,9 +11,26 @@ import {
 import { Link } from "react-router";
 import Logo from "../../components/Shared/Logo";
 import SocialLogin from "../../components/Shared/SocialLogin";
+import { useForm } from "react-hook-form";
+import useAuth from "../../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const [showPass, setShowPass] = useState(false);
+
+   const { createUser } = useAuth();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const handleRegister = (data) => {
+    createUser(data.email, data.password)
+      .then((result) => {})
+      .catch((err) => {
+        toast.error(err.message);
+      });
+  };
 
   return (
     <div className="w-full overflow-y-auto md:w-1/2 bg-[#F7F7F2] flex justify-center p-8 lg:p-16 text-[#2C3E30]">
@@ -36,7 +53,10 @@ const Register = () => {
         </div>
 
         {/* Form */}
-        <form className="space-y-6 mt-8">
+        <form
+          onSubmit={handleSubmit(handleRegister)}
+          className="space-y-6 mt-8"
+        >
           {/* Name Field */}
           <div className="space-y-2">
             <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
@@ -51,10 +71,14 @@ const Register = () => {
               </div>
               <input
                 type="text"
-                placeholder="John Sage"
+                {...register("name", { required: true })}
+                placeholder="Your Name"
                 className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#8FA895]/50 focus:border-[#8FA895] transition-all text-sm placeholder-gray-400"
               />
             </div>
+             {errors.name?.type === "required" && (
+              <p className="text-red-500 text-xs">Name is required</p>
+            )}
           </div>
 
           {/* Photo Upload */}
@@ -67,9 +91,13 @@ const Register = () => {
               <input
                 type="file"
                 accept="image/*"
+                 {...register("image", { required: true })}
                 className="text-sm text-gray-600"
               />
             </div>
+             {errors?.image?.type === "required" && (
+              <p className="text-red-500 text-xs">Image is required</p>
+            )}
           </div>
 
           {/* Email Field */}
@@ -86,10 +114,14 @@ const Register = () => {
               </div>
               <input
                 type="email"
+                {...register("email", { required: true })}
                 placeholder="your.wisdom@sage.co"
                 className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#8FA895]/50 focus:border-[#8FA895] transition-all text-sm placeholder-gray-400"
               />
             </div>
+              {errors.email?.type === "required" && (
+              <p className="text-red-500 text-xs">Email is required</p>
+            )}
           </div>
 
           {/* Password Field */}
@@ -106,6 +138,11 @@ const Register = () => {
               </div>
               <input
                 type={showPass ? "text" : "password"}
+                 {...register("password", {
+                  required: true,
+                  minLength: 6,
+                  pattern: /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/,
+                })}
                 placeholder="••••••••"
                 className="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#8FA895]/50 focus:border-[#8FA895] transition-all text-sm placeholder-gray-400"
               />
@@ -125,11 +162,24 @@ const Register = () => {
                 )}
               </div>
             </div>
+             {errors.password?.type === "required" && (
+              <p className="text-red-500 text-xs">Password is required</p>
+            )}
+            {errors.password?.type === "minLength" && (
+              <p className="text-red-500 text-xs">
+                Password must be 6 characters or longer
+              </p>
+            )}
+            {errors.password?.type === "pattern" && (
+              <p className="text-red-500 text-xs">
+                Password must have an uppercase and lowercase character
+              </p>
+            )}
           </div>
 
           {/* Sign up Button */}
           <button
-            type="button"
+            type="submit"
             className="w-full cursor-pointer bg-[#8FA895] hover:bg-[#7D9483] text-white font-medium py-3.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg transform active:scale-[0.99]"
           >
             Sign up

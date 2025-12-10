@@ -3,9 +3,18 @@ import { Feather, Mail, Lock, EyeOff, ArrowRight, Eye } from "lucide-react";
 import { Link } from "react-router";
 import Logo from "../../components/Shared/Logo";
 import SocialLogin from "../../components/Shared/SocialLogin";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
   const [showPass, setShowPass] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const handleLogin = (data) => {
+    console.log(data);
+  };
   return (
     <div className="w-full md:w-1/2 bg-[#F7F7F2] flex justify-center p-8 lg:p-16 text-[#2C3E30] overflow-y-scroll">
       <div className="max-w-md w-full space-y-8">
@@ -25,7 +34,7 @@ const Login = () => {
         </div>
 
         {/* Form */}
-        <form className="space-y-6 mt-8">
+        <form onSubmit={handleSubmit(handleLogin)} className="space-y-6 mt-8">
           {/* Email Field */}
           <div className="space-y-2">
             <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
@@ -40,10 +49,14 @@ const Login = () => {
               </div>
               <input
                 type="email"
+                {...register("email", { required: true })}
                 placeholder="your.wisdom@sage.co"
                 className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#8FA895]/50 focus:border-[#8FA895] transition-all text-sm placeholder-gray-400"
               />
             </div>
+            {errors?.email?.type === "required" && (
+              <p className="text-red-500 text-xs">Email is required</p>
+            )}
           </div>
 
           {/* Password Field */}
@@ -60,6 +73,11 @@ const Login = () => {
               </div>
               <input
                 type={showPass ? "text" : "password"}
+                {...register("password", {
+                  required: true,
+                  minLength: 6,
+                  pattern: /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/,
+                })}
                 placeholder="••••••••"
                 className="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#8FA895]/50 focus:border-[#8FA895] transition-all text-sm placeholder-gray-400"
               />
@@ -79,6 +97,15 @@ const Login = () => {
                 )}
               </div>
             </div>
+             {errors?.password?.type === "required" && (
+              <p className="text-red-500 text-xs">Password is required</p>
+            )}
+            {errors?.password?.type === "minLength" && (
+              <p className="text-red-500 text-xs">Password didn't match</p>
+            )}
+            {errors?.password?.type === "pattern" && (
+              <p className="text-red-500 text-xs">Password didn't match</p>
+            )}
           </div>
 
           {/* Forgot Password Link */}
@@ -93,7 +120,7 @@ const Login = () => {
 
           {/* Sign In Button */}
           <button
-            type="button"
+            type="submit"
             className="w-full bg-[#8FA895] hover:bg-[#7D9483] text-white font-medium py-3.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg transform active:scale-[0.99] cursor-pointer"
           >
             Sign In
