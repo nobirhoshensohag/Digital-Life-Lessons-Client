@@ -8,25 +8,66 @@ import {
   User,
   ImagePlus,
 } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import Logo from "../../components/Shared/Logo";
 import SocialLogin from "../../components/Shared/SocialLogin";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import toast from "react-hot-toast";
+import axios from "axios";
+import useAxios from "../../hooks/useAxios"
 
 const Register = () => {
   const [showPass, setShowPass] = useState(false);
-
-   const { createUser } = useAuth();
+const { createUser, updateUser, setUser } = useAuth();
+  const axiosInstance = useAxios();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
+   
   const handleRegister = (data) => {
+    const profileImage = data.image[0];
     createUser(data.email, data.password)
-      .then((result) => {})
+      .then(() => {
+        const formData = new FormData();
+        formData.append("image", profileImage);
+        axios
+          .post(
+            `https://api.imgbb.com/1/upload?key=${
+              import.meta.env.VITE_IMAGE_HOST_KEY
+            }`,
+            formData
+          )
+          .then((res) => {
+            const userProfile = {
+              displayName: data.name,
+              photoURL: res.data.data.url,
+            };
+            updateUser(userProfile)
+              .then(() => {
+                const newUser = {
+                  displayName: data.name,
+                  email: data.email,
+                  photoURL: userProfile.photoURL,
+                  isPremium: false,
+                };
+
+                setUser(newUser);
+                axiosInstance.post("/users", newUser).then((r) => {
+                  if (r.data.insertedId) {
+                    toast.success("Registration Successful");
+                    navigate("/");
+                  }
+                });
+              })
+              .catch((e) => {
+                console.log(e);
+              });
+          });
+      })
       .catch((err) => {
         toast.error(err.message);
       });
@@ -86,13 +127,13 @@ const Register = () => {
             <label className="text-xs font-medium text-gray-600 uppercase tracking-wide">
               Profile Photo
             </label>
-            <div className="flex items-center gap-3 p-3 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-[#8FA895] transition-all">
-              <ImagePlus size={20} className="text-gray-500" />
+            <div className="flex items-center gap-3 bg-white border border-gray-200 rounded-xl cursor-pointer hover:border-[#8FA895] transition-all">
+              
               <input
                 type="file"
                 accept="image/*"
                  {...register("image", { required: true })}
-                className="text-sm text-gray-600"
+                className="file-input file-input-ghost w-full"
               />
             </div>
              {errors?.image?.type === "required" && (
