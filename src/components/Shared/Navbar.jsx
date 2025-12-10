@@ -303,7 +303,7 @@ const Navbar = () => {
                   to="/auth/register"
                   className="btn bg-[#4F6F52] hover:bg-[#3A523C] text-white border-none w-full rounded-full shadow-md flex items-center justify-center gap-2"
                 >
-                  <PenTool className="w-4 h-4" /> Write a Lesson
+                  <PenTool className="w-4 h-4" /> Sign up
                 </Link>
               </>
             )}

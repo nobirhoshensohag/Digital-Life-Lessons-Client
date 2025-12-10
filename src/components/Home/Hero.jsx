@@ -68,7 +68,7 @@ const Hero = () => {
   };
 
   return (
-    <div className="relative w-full overflow-hidden font-sans text-slate-800">
+    <div className="relative w-full overflow-hidden text-slate-800">
       {/* Decorative Background Blob */}
       <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-[#D4DEC9] rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
@@ -214,7 +214,7 @@ const Hero = () => {
           </div>{" "}
           {/* --- Right: Carousel PC --- */}
           <div
-            className="relative h-[400px] lg:h-[550px] w-full"
+            className="relative h-[400px] lg:h-[550px] w-full hidden lg:block"
             onMouseEnter={() => setIsAutoPlaying(false)}
             onMouseLeave={() => setIsAutoPlaying(true)}
           >

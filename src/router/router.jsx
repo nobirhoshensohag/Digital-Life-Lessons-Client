@@ -5,6 +5,7 @@ import AuthLayout from "../layouts/AuthLayout";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import PublicLessons from "../pages/PublicLessons";
+import Contact from "../pages/Contact";
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,8 @@ export const router = createBrowserRouter([
         path: "public-lessons",
         element: <PublicLessons />,
       },
+       { path: "contact", 
+        element: <Contact /> },
     ],
   },
   {

@@ -1,19 +1,31 @@
 import React, { useState } from "react";
 import { Feather, Mail, Lock, EyeOff, ArrowRight, Eye } from "lucide-react";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate  } from "react-router";
 import Logo from "../../components/Shared/Logo";
 import SocialLogin from "../../components/Shared/SocialLogin";
 import { useForm } from "react-hook-form";
+import useAuth from "../../hooks/useAuth";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const [showPass, setShowPass] = useState(false);
+  const { loginUser } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
   const handleLogin = (data) => {
-    console.log(data);
+    loginUser(data.email, data.password)
+      .then(() => {
+        toast.success("Sign in successful");
+        navigate(location?.state || "/");
+      })
+      .catch((err) => {
+        toast.error(err.message);
+      });
   };
   return (
     <div className="w-full md:w-1/2 bg-[#F7F7F2] flex justify-center p-8 lg:p-16 text-[#2C3E30] overflow-y-scroll">
