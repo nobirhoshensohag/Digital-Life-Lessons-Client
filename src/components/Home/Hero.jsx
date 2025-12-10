@@ -75,8 +75,79 @@ const Hero = () => {
       </div>
 
       <div className="max-w-[1440px] mx-auto px-6 py-12 lg:py-24 relative z-10 min-h-[650px] flex items-center">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center w-full">
-          {/* --- LEFT: Text Content (Animated) --- */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center w-full mt-12 lg:mt-0">
+          {" "}
+          {/* --- Left: Carousel Mobile--- */}
+          <div
+            className="relative h-[200px] lg:hidden w-full"
+            onMouseEnter={() => setIsAutoPlaying(false)}
+            onMouseLeave={() => setIsAutoPlaying(true)}
+          >
+            {/* Image Frame */}
+            <div className="relative w-full h-full rounded-[2rem] overflow-hidden shadow-2xl border-4 border-white/50">
+              {slides.map((slide, index) => (
+                <div
+                  key={slide.id}
+                  className={`absolute inset-0 w-full h-full transition-opacity duration-700 ease-in-out ${
+                    index === currentSlide
+                      ? "opacity-100 scale-100"
+                      : "opacity-0 scale-105"
+                  }`}
+                >
+                  <img
+                    src={slide.image}
+                    alt={slide.headline}
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Gradient Overlay for text readability if needed, or just style */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#2C3E2E]/60 to-transparent opacity-40"></div>
+                </div>
+              ))}
+
+              {/* Floating Glass Card (Social Proof/Stats) */}
+              <div className="absolute bottom-8 right-8 bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl shadow-lg max-w-[200px] hidden md:block animate-bounce-slow">
+                <div className="flex items-center gap-3">
+                  <div className="avatar-group -space-x-3 rtl:space-x-reverse">
+                    <div className="avatar border-none">
+                      <div className="w-8">
+                        <img src="https://i.pravatar.cc/100?img=1" />
+                      </div>
+                    </div>
+                    <div className="avatar border-none">
+                      <div className="w-8">
+                        <img src="https://i.pravatar.cc/100?img=2" />
+                      </div>
+                    </div>
+                    <div className="avatar border-none placeholder">
+                      <div className="w-8 bg-[#4F6F52] text-neutral-content text-xs">
+                        <span>+99</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-white font-medium">
+                    Join 10k+ Sages sharing wisdom.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Navigation Buttons (Floating) */}
+            <div className="absolute bottom-6 left-6 flex gap-2">
+              <button
+                onClick={prevSlide}
+                className="btn btn-circle btn-sm bg-white/20 hover:bg-white/40 border-none text-white backdrop-blur-sm"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="btn btn-circle btn-sm bg-white/20 hover:bg-white/40 border-none text-white backdrop-blur-sm"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          </div>
+          {/* --- LEFT: Text Content  --- */}
           <div className="space-y-8">
             {slides.map(
               (slide, index) =>
@@ -132,9 +203,8 @@ const Hero = () => {
                 ))}
               </div>
             </div>
-          </div>
-
-          {/* --- RIGHT: Visual Carousel (Card Style) --- */}
+          </div>{" "}
+          {/* --- Right: Carousel PC --- */}
           <div
             className="relative h-[400px] lg:h-[550px] w-full"
             onMouseEnter={() => setIsAutoPlaying(false)}
@@ -207,7 +277,7 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* CSS Animation injection for specific text fades */}
+      {/* CSS Animation textfade*/}
       <style jsx>{`
         @keyframes fade-in-up {
           0% {
