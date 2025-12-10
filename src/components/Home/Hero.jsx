@@ -7,6 +7,7 @@ import {
   Share2,
   ArrowRight,
 } from "lucide-react";
+import { Link } from "react-router";
 
 const slides = [
   {
@@ -171,10 +172,17 @@ const Hero = () => {
 
                     {/* CTA Buttons using DaisyUI */}
                     <div className="flex flex-wrap gap-4 pt-2">
-                      <button className="btn bg-[#4F6F52] hover:bg-[#3A523C] text-white border-none px-8 h-12 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-2">
+                        <Link
+                        to={
+                          slide.cta === "Explore Library"
+                            ? "/public-lessons"
+                            : "/add-lesson"
+                        }
+                        className="btn bg-[#4F6F52] hover:bg-[#3A523C] text-white border-none px-8 h-12 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
+                      >
                         {slide.cta}
                         <ArrowRight className="w-4 h-4" />
-                      </button>
+                      </Link>
                       <button className="btn btn-ghost hover:bg-[#D4DEC9] hover:bg-opacity-30 text-[#4F6F52] h-12 px-6 rounded-full">
                         How it works
                       </button>
