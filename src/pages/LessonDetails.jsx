@@ -47,42 +47,48 @@ const LessonDetails = () => {
   const handleFavorite = async () => {
     if (!lesson?._id || !user?.email) return;
 
-    setIsFavorite(true);
+    const newFavoriteState = !isFavorite;
+    setIsFavorite(newFavoriteState);
 
-    const favoriteLesson = {
-      postId: lesson._id,
-      postTitle: lesson.title,
-      email: user.email,
-      name: user.displayName,
-      image: user.photoURL,
-    };
+    const newFavoritesCount = newFavoriteState
+      ? (lesson.favorites || 0) + 1
+      : Math.max((lesson.favorites || 1) - 1, 0);
+    setLesson({ ...lesson, favorites: newFavoritesCount });
 
-    try {
-      const res = await axiosInstance.post("/favorites", favoriteLesson);
-      if (res.data.insertedId) {
-        setFavorite({ ...favoriteLesson, _id: res.data.insertedId });
-        toast.success("Added to Favorites!");
+    if (newFavoriteState) {
+      // Add favorite
+      const favoriteLesson = {
+        postId: lesson._id,
+        postTitle: lesson.title,
+        email: user.email,
+        name: user.displayName,
+        image: user.photoURL,
+      };
+
+      try {
+        const res = await axiosInstance.post("/favorites", favoriteLesson);
+        if (res.data.insertedId) {
+          setFavorite({ ...favoriteLesson, _id: res.data.insertedId });
+          toast.success("Added to Favorites!");
+        }
+      } catch (err) {
+        setIsFavorite(false);
+        setLesson({ ...lesson, favorites: Math.max(newFavoritesCount - 1, 0) });
+        toast.error("Failed to add favorite");
       }
-    } catch (err) {
-      setIsFavorite(false);
-      toast.error("Failed to add favorite");
-    }
-  };
-
-  const handleDeleteFavorite = async (id) => {
-    if (!id) return;
-
-    setIsFavorite(false);
-
-    try {
-      const res = await axiosInstance.delete(`/favorites/${id}`);
-      if (res.data.deletedCount > 0) {
-        setFavorite(null);
-        toast.success("Removed from favorites!");
+      } else {
+      // Remove favorite
+      try {
+        const res = await axiosInstance.delete(`/favorites/${favorite._id}`);
+        if (res.data.deletedCount > 0) {
+          setFavorite(null);
+          toast.success("Removed from favorites!");
+        }
+      } catch (err) {
+        setIsFavorite(true);
+        setLesson({ ...lesson, favorites: newFavoritesCount + 1 });
+        toast.error("Failed to remove favorite");
       }
-    } catch (err) {
-      setIsFavorite(true);
-      toast.error("Failed to remove favorite");
     }
   };
 
@@ -118,6 +124,13 @@ const LessonDetails = () => {
       setFavorite(exists || null);
     });
   }, [lesson, axiosInstance, user]);
+  useEffect(() => {
+    if (!lesson?._id) return;
+
+    axiosInstance.get(`/favorites?postId=${lesson._id}`).then((res) => {
+      setLesson({ ...lesson, favorites: res.data.length });
+    });
+  }, [lesson, axiosInstance]);
 
   if (loading)
     return (
@@ -255,27 +268,27 @@ const LessonDetails = () => {
                 )}
 
                 {/* Favorites */}
-                {isFavorite && favorite ? (
-                  <button
-                    onClick={() => handleDeleteFavorite(favorite._id)}
-                    className="flex cursor-pointer items-center gap-2 bg-white/10 hover:bg-red-500/30 transition-colors rounded-full px-3 py-1 shadow-inner"
-                  >
-                    <FaHeart size={20} className="text-red-500" />
-                    <span className="text-sm text-red-500 font-semibold">
-                      {lesson?.favorites || 0}
-                    </span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleFavorite}
-                    className="flex cursor-pointer items-center gap-2 bg-white/10 hover:bg-red-500/30 transition-colors rounded-full px-3 py-1 shadow-inner"
-                  >
-                    <FaRegHeart size={20} className="text-red-500" />
-                    <span className="text-sm text-red-500 font-semibold">
-                      {lesson?.favorites || 0}
-                    </span>
-                  </button>
-                )}
+                <button
+                  onClick={handleFavorite}
+                  className="flex cursor-pointer items-center gap-2 bg-white/10 hover:bg-red-500/30 transition-colors rounded-full px-3 py-1 shadow-inner"
+                >
+                  {isFavorite && favorite ? (
+                    <>
+                      <FaHeart size={20} className="text-red-500" />
+                      <span className="text-sm text-red-500 font-semibold">
+                        {lesson?.favorites || 0}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <FaRegHeart size={20} className="text-red-500" />
+                      <span className="text-sm text-red-500 font-semibold">
+                        {lesson?.favorites || 0}
+                      </span>
+                    </>
+                  )}
+                </button>
 
                 {/* Share */}
                 <div className="flex flex-col items-center">
@@ -406,7 +419,7 @@ const LessonDetails = () => {
                 No comments yet. Be the first to share your thoughts!
               </p>
             ) : (
-              comments.slice(0, 5).map((c, index) => (
+              comments.map((c, index) => (
                 <div
                   key={index}
                   className="bg-white/10 p-4 rounded-xl flex gap-3 items-start"
