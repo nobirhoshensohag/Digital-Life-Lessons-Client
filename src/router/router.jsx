@@ -6,6 +6,9 @@ import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import PublicLessons from "../pages/PublicLessons";
 import Contact from "../pages/Contact";
+import AddLessons from "../pages/ProtectedPages/AddLessons";
+import PrivateRoute from "../routes/PrivateRoute/PrivateRoute";
+import LessonDetails from "../pages/LessonDetails";
 
 export const router = createBrowserRouter([
   {
@@ -21,7 +24,20 @@ export const router = createBrowserRouter([
         element: <PublicLessons />,
       },
        { path: "contact", 
-        element: <Contact /> },
+        element: <Contact /> 
+      },
+       {
+        path: "add-lessons",
+        element: (
+          <PrivateRoute>
+            <AddLessons />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/lesson-details/:id",
+        element: <LessonDetails />,
+      },
     ],
   },
   {

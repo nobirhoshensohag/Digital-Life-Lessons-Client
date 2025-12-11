@@ -142,6 +142,62 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+   const links = (
+    <>
+      {" "}
+      <NavLink
+        to="/"
+        className={({ isActive }) =>
+          `text-sm font-medium text-[#2C3E2E]/80 hover:text-[#4F6F52] relative pb-1 transition-colors ${
+            isActive
+              ? "after:w-full after:bg-[#4F6F52] text-[#4F6F52]"
+              : "after:w-0 after:bg-transparent"
+          } after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:transition-all after:duration-300`
+        }
+      >
+        Home
+      </NavLink>
+      <NavLink
+        to="/public-lessons"
+        className={({ isActive }) =>
+          `text-sm font-medium text-[#2C3E2E]/80 hover:text-[#4F6F52] relative pb-1 transition-colors ${
+            isActive
+              ? "after:w-full after:bg-[#4F6F52] text-[#4F6F52]"
+              : "after:w-0 after:bg-transparent"
+          } after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:transition-all after:duration-300`
+        }
+      >
+        Public Lessons
+      </NavLink>
+      {user && (
+        <NavLink
+          to="/add-lessons"
+          className={({ isActive }) =>
+            `text-sm font-medium text-[#2C3E2E]/80 hover:text-[#4F6F52] relative pb-1 transition-colors ${
+              isActive
+                ? "after:w-full after:bg-[#4F6F52] text-[#4F6F52]"
+                : "after:w-0 after:bg-transparent"
+            } after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:transition-all after:duration-300`
+          }
+        >
+          Add Lessons
+        </NavLink>
+      )}
+      <NavLink
+        to="/contact"
+        className={({ isActive }) =>
+          `text-sm font-medium text-[#2C3E2E]/80 hover:text-[#4F6F52] relative pb-1 transition-colors ${
+            isActive
+              ? "after:w-full after:bg-[#4F6F52] text-[#4F6F52]"
+              : "after:w-0 after:bg-transparent"
+          } after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:transition-all after:duration-300`
+        }
+      >
+        Contact
+      </NavLink>
+    </>
+  );
+
   return (
           <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-in-out ${
@@ -150,33 +206,12 @@ const Navbar = () => {
           : "bg-transparent py-5"
       }`}
     >
-      <div className="max-w-[1440px] mx-auto px-6">
+      <div className="max-w-[1440px] mx-auto px-6 lg:px-0">
         <div className="flex items-center justify-between">
           <Logo />
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center space-x-8">
-            {["/", "/public-lessons", "/contact"].map((path) => (
-              <NavLink
-                key={path}
-                to={path}
-                className={({ isActive }) =>
-                  `text-sm font-medium text-[#2C3E2E]/80 hover:text-[#4F6F52] relative pb-1 transition-colors ${
-                    isActive
-                      ? "after:w-full after:bg-[#4F6F52] text-[#4F6F52]"
-                      : "after:w-0 after:bg-transparent"
-                  } after:absolute after:left-0 after:-bottom-0.5 after:h-[2px] after:transition-all after:duration-300`
-                }
-              >
-               
-              {path === "/"
-                  ? "Home"
-                  : path === "/public-lessons"
-                  ? "Public Lessons"
-                  : "Contact"}
-              </NavLink>
-            ))}
-          </div>
+         <div className="hidden md:flex items-center space-x-8">{links}</div>
 
           {/* Desktop Auth Section */}
           <div className="hidden md:flex items-center gap-4">
@@ -252,6 +287,15 @@ const Navbar = () => {
           >
             Public Lessons
           </NavLink>
+           {user && (
+            <NavLink
+              to="/add-lessons"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="block text-lg font-medium py-2 border-b border-dashed border-[#D4DEC9]/50 text-[#2C3E2E]"
+            >
+              Add Lessons
+            </NavLink>
+          )}
           <NavLink
             to="/contact"
             onClick={() => setIsMobileMenuOpen(false)}

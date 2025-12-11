@@ -1,9 +1,9 @@
 import React from "react";
-import { ClockLoader } from "react-spinners";
+import { FadeLoader } from "react-spinners";
 const Loader = () => {
   return (
     <div className="flex justify-center items-center min-h-screen">
-      <ClockLoader color="#4f6f52" />
+      <FadeLoader color="#4f6f52" />
     </div>
   );
 };

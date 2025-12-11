@@ -21,11 +21,9 @@ const SocialLogin = () => {
             email: result.user.email,
             isPremium: false,
           })
-          .then((res) => {
-            if (res.data.insertedId) {
-              toast.success("Sign in successful");
-              navigate("/");
-            }
+          .then(() => {
+            toast.success("Sign in successful");
+            navigate("/");
           });
       })
       .catch((err) => {

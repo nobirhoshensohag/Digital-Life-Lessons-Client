@@ -5,3 +5,30 @@
 body {
   font-family: "PT Serif", serif;
 }
+
+.custom-scrollbar {
+  overflow-y: scroll;
+  height: 300px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f3f5f0;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #4f6f52;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #1a2f23;
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #4f6f52 #f3f5f0;
+}
