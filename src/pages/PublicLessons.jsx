@@ -118,7 +118,7 @@ const PublicLessons = () => {
               <LessonCard
                 key={lesson._id}
                 lesson={lesson}
-                user={currentUser || { isPremium: false }} // Fallback if user not loaded yet
+               user={currentUser || { isPremium: false }}   
               />
             ))}
           </div>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import doneAnimation from "../../assets/Success.json";
 import {
   Feather,
   Image as ImageIcon,
@@ -14,6 +15,7 @@ import usePremium from "../../hooks/usePremium";
 import { Link } from "react-router";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
+import Lottie from "lottie-react";
 
 const AddLessons = () => {
   const axiosInstance = useAxios();
@@ -90,8 +92,11 @@ const AddLessons = () => {
         category: data.category,
         tone: data.tone,
         isPrivate: data.isPrivate ? "true" : "false",
-        isPremiumAccess: data?.isPremiumAccess ? "true" : "false", // optional chaining
-        image: data.image,
+        isPremiumAccess: data?.isPremiumAccess ? "true" : "false",
+        image:
+          typeof data.image === "string" && data.image.trim() !== ""
+            ? data.image
+            : "",
         email: user?.email,
         name: user?.displayName,
         authorImage: user?.photoURL,
@@ -192,18 +197,22 @@ const AddLessons = () => {
           <div className="lg:col-span-8 p-8 md:p-12">
             {isSubmitted ? (
               /* success screen */
-              <div className="h-full flex flex-col items-center justify-center text-center space-y-6 animate-fade-in">
-                <div className="w-20 h-20 bg-[#4F6F52] rounded-full flex items-center justify-center text-white shadow-xl mb-2">
-                  <Check size={40} strokeWidth={3} />
-                </div>
+               <>
+                {" "}
+                <Lottie animationData={doneAnimation} size={16} />
+                <div className="h-full flex flex-col items-center justify-center text-center space-y-6 animate-fade-in">
+                  <div className="w-20 h-20 bg-[#4F6F52] rounded-full flex items-center justify-center text-white shadow-xl mb-2">
+                    <Check size={40} strokeWidth={3} />
+                  </div>
 
-                <h2 className="text-3xl font-bold text-[#1A2F23]">
-                  Wisdom Recorded
-                </h2>
-                <p className="text-gray-500 max-w-sm">
-                  Your insight has been added to the Book of Wisdom.
-                </p>
-              </div>
+                 <h2 className="text-3xl font-bold text-[#1A2F23]">
+                    Wisdom Recorded
+                  </h2>
+                  <p className="text-gray-500 max-w-sm">
+                    Your insight has been added to the Book of Wisdom.
+                  </p>
+                </div>
+              </>
             ) : (
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
                 {/* Title */}
