@@ -85,7 +85,7 @@ const Contact = () => {
                 <p className="text-xs text-[#D4C5A8] uppercase tracking-wider font-medium">
                   Email Us
                 </p>
-                <p className="text-lg">hello@sage.app</p>
+                <p className="text-lg">nobirhoshensohag11@gmail.com</p>
               </div>
             </div>
 
@@ -97,14 +97,14 @@ const Contact = () => {
                 <p className="text-xs text-[#D4C5A8] uppercase tracking-wider font-medium">
                   Visit HQ
                 </p>
-                <p className="text-lg">San Francisco, CA</p>
+                <p className="text-lg">Baganchara, Jashore</p>
               </div>
             </div>
           </div>
 
           <div className="relative z-10 pt-12 flex items-center gap-2 text-white/30 text-sm">
             <Globe className="w-4 h-4" />
-            <span>sage.app &copy; 2025</span>
+            <span>sage.app &copy; {new Date().getFullYear()}</span>
           </div>
         </div>
 
