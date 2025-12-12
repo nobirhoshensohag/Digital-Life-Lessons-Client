@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Filter, BookOpen } from "lucide-react";
+import { MdOutlineCancel } from "react-icons/md";
 import Loader from "../components/Shared/Loader";
 import LessonCard from "../components/Shared/LessonCard";
 import useAxios from "../hooks/useAxios";
@@ -22,12 +23,18 @@ const PublicLessons = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [sort, setSort] = useState("");
   const [filter, setFilter] = useState("");
+  const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
   const { user } = useAuth();
   const axiosInstance = useAxios();
   const [loading, setLoading] = useState(true);
   const limit = 6;
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    setSearch(e.target.search.value);
+    console.log(e.target.search.value);
+  };
    const handleSort = (e) => {
     setSort(e.target.value);
   };
@@ -38,6 +45,12 @@ const PublicLessons = () => {
     setFilter(e.target.value);
   };
 
+  const handleClear = () => {
+    setSearch("");
+    setSort("");
+    setCategory("");
+    setFilter("");
+  };
   useEffect(() => {
     setLoading(true);
     axiosInstance
@@ -46,7 +59,7 @@ const PublicLessons = () => {
           currentPage * limit
         }&sort=${sort}&filter=${filter}&tone=${filter}&category=${encodeURIComponent(
           category
-        )}`
+        )}&search=${search}`
       )
       .then((res) => {
           setLessons(res.data.result);
@@ -57,7 +70,7 @@ const PublicLessons = () => {
         console.log(page);
       })
       .catch(() => setLoading(false));
-   }, [axiosInstance, currentPage, sort, filter, category]);
+    }, [axiosInstance, currentPage, sort, filter, category, search]);
 
   useEffect(() => {
     if (!user?.email) return;
@@ -108,25 +121,38 @@ const PublicLessons = () => {
 
         {/* SEARCH & FILTER BAR */}
         <motion.div
-          className="max-w-7xl mx-auto mb-16"
+          className="max-w-7xl mx-auto mb-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.6 }}
            >
-          <div className="bg-white rounded-2xl shadow-xl shadow-[#1A2F23]/5 p-4 flex flex-col md:flex-row items-center gap-3 border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-xl shadow-[#1A2F23]/5 p-4 flex flex-col xl:flex-row items-center gap-3 border border-gray-100">
             {/* SEARCH INPUT */}
-            <div className="flex-1 flex items-center px-4 py-3 w-full">
+            <form
+              onSubmit={(e) => handleSearch(e)}
+              className="flex-1 flex items-center px-2 lg:px-4 py-1 w-full"
+            >
               <Search size={20} className="text-gray-400 mr-3" />
               <input
                 type="text"
+                name="search"
                 placeholder="Search for wisdom..."
                 className="flex-1 bg-transparent border-none outline-none text-gray-700 placeholder:text-gray-400 font-medium"
-              />
-            </div>
+               />{" "}
+              {/* SEARCH BUTTON */}
+              <button
+                type="submit"
+                className="w-full md:w-auto px-8 py-2 rounded-xl font-bold text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
+                style={{ backgroundColor: THEME.dark }}
+              >
+                Search
+              </button>
+            </form>
               {/* Category Dropdown */}
             <select
+             value={category}
               onChange={(e) => handleCategory(e)}
-              className="border cursor-pointer rounded-xl px-4 py-3 text-gray-700 w-full md:w-auto"
+              className="border cursor-pointer rounded-xl px-4 py-2 text-gray-700 w-full md:w-auto"
             >
               <option value="">Filter: All</option>
               <option value="Personal Growth">Personal Growth</option>
@@ -138,8 +164,9 @@ const PublicLessons = () => {
 
             {/* FILTER DROPDOWN */}
             <select
+            value={filter}
               onChange={(e) => handleFilter(e)}
-              className="border cursor-pointer rounded-xl px-4 py-3 text-gray-700 w-full md:w-auto"
+              className="border cursor-pointer rounded-xl px-4 py-2 text-gray-700 w-full md:w-auto"
             >
               <option value="">Filter: All Emotional Tones</option>
               <option value="Motivational">Motivational</option>
@@ -150,20 +177,22 @@ const PublicLessons = () => {
 
             {/* SORT DROPDOWN */}
             <select
+             value={sort}
               onClick={(e) => handleSort(e)}
-              className="border cursor-pointer rounded-xl px-4 py-3 text-gray-700 w-full md:w-auto"
+              className="border cursor-pointer rounded-xl px-4 py-2 text-gray-700 w-full md:w-auto"
             >
               <option value="postedAt">Sort: Newest</option>
               <option value="favorites">Most Saved</option>
               <option value="likes">Most Liked</option>
             </select>
 
-            {/* SEARCH BUTTON */}
+             </div>
+          <div className="flex justify-center mt-4">
             <button
-              className="w-full md:w-auto px-8 py-3 rounded-xl font-bold text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
-              style={{ backgroundColor: THEME.dark }}
+              onClick={handleClear}
+              className="w-full md:w-auto px-8 py-2 rounded-xl font-bold text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer flex items-center gap-1"
             >
-              Search
+               <MdOutlineCancel /> Clear
             </button>
           </div>
         </motion.div>
@@ -252,3 +281,5 @@ const PublicLessons = () => {
 };
 
 export default PublicLessons;
+
+
