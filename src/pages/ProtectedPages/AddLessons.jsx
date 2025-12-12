@@ -375,15 +375,11 @@ const AddLessons = () => {
                       type="checkbox"
                       {...register("isPrivate")}
                       className="w-5 h-5 accent-[#4F6F52]"
-                      disabled={!isPremium}
+                      
                     />
                     <span className="text-sm text-gray-700">
                       Private — Only you can see{" "}
-                      {!isPremium && (
-                        <Link className="underline text-blue-500">
-                          (Be a Premium Member to access this)
-                        </Link>
-                      )}
+                      
                     </span>
                   </label>
                 </div>

@@ -23,7 +23,7 @@ const LessonCard = ({ lesson, user }) => {
 
   return (
     <div
-      className={`relative w-full max-w-md mx-auto bg-white rounded-[2rem] overflow-hidden border transition-all duration-300 group ${
+       className={`relative w-full max-w-md mx-auto bg-white rounded-[2rem] overflow-hidden border transition-all duration-300 h-[500px] lg:h-[420px] group ${
         isLocked
           ? "border-gray-200"
           : `border-gray-100 hover:shadow-2xl hover:-translate-y-1`
@@ -34,9 +34,7 @@ const LessonCard = ({ lesson, user }) => {
           : "0 25px 50px -12px rgba(26, 47, 35, 0.1)",
       }}
     >
-      {/* ====================
-          PREMIUM LOCK SCREEN
-      ===================== */}
+      {/* PREMIUM LOCK SCREEN*/}
       {isLocked && (
         <div
           className="absolute inset-0 z-20 flex flex-col items-center justify-center p-8 text-center backdrop-blur-md"
@@ -66,9 +64,7 @@ const LessonCard = ({ lesson, user }) => {
         </div>
       )}
 
-      {/* ====================
-          MAIN CONTENT
-      ===================== */}
+       {/* MAIN CONTENT*/}
       <div
         className={`p-6 md:p-8 h-full flex flex-col ${
           isLocked
@@ -105,7 +101,7 @@ const LessonCard = ({ lesson, user }) => {
         {/* Title & Description */}
         <div className="mb-6 flex-grow">
           <h2
-            className="text-2xl font-serif font-bold leading-tight mb-3"
+            className="text-2xl font-serif font-bold leading-tight mb-3 line-clamp-2"
             style={{ color: COLORS.darkGreen }}
           >
             {lesson.title}
@@ -161,7 +157,7 @@ const LessonCard = ({ lesson, user }) => {
 
           <Link
             to={`/lesson-details/${lesson._id}`}
-            className="flex items-center cursor-pointer gap-2 px-4 py-3 mt-3 xl:mt-0 rounded-xl font-medium transition-all hover:gap-3 hover:shadow-md active:scale-95"
+            className="flex justify-center items-center cursor-pointer gap-2 px-4 py-3 mt-3 xl:mt-0 rounded-xl font-medium transition-all hover:gap-3 hover:shadow-md active:scale-95"
             style={{ backgroundColor: COLORS.mist, color: COLORS.darkGreen }}
           >
             <span>See Details</span>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Search, Filter, BookOpen } from "lucide-react";
 import Loader from "../components/Shared/Loader";
 import LessonCard from "../components/Shared/LessonCard";
@@ -15,21 +16,31 @@ const PublicLessons = () => {
   };
 
   const [lessons, setLessons] = useState([]);
+  const [totalLessons, setTotalLessons] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
   const { user } = useAuth();
   const axiosInstance = useAxios();
   const [loading, setLoading] = useState(true);
+  const limit = 6;
 
   useEffect(() => {
     setLoading(true);
     axiosInstance
-      .get(`/lessons?isPrivate=false`)
+       .get(
+        `/lessons?isPrivate=false&limit=${limit}&skip=${currentPage * limit}`
+      )
       .then((res) => {
-        setLessons(res.data);
+          setLessons(res.data.result);
+        setTotalLessons(res.data.total);;
         setLoading(false);
+          const page = Math.ceil(res.data.total / limit);
+        setTotalPages(page);
+        console.log(page);
       })
       .catch(() => setLoading(false));
-  }, [axiosInstance]);
+   }, [axiosInstance, currentPage]);
 
   useEffect(() => {
     if (!user?.email) return;
@@ -43,7 +54,7 @@ const PublicLessons = () => {
       className="min-h-screen w-full relative py-20"
       style={{ backgroundColor: THEME.light }}
     >
-      {/* --- BACKGROUND AMBIENCE --- */}
+      {/* Background */}
       <div
         className="absolute inset-0 z-0 pointer-events-none"
         style={{
@@ -54,10 +65,15 @@ const PublicLessons = () => {
         }}
       />
 
-      {/* --- CONTENT CONTAINER --- */}
+      
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* 1. HERO SECTION */}
-        <div className="text-center mb-16 space-y-4 animate-fade-in-up">
+        {/* HERO SECTION */}
+        <motion.div
+          className="text-center mb-16 space-y-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+        >
           <div className="inline-flex items-center justify-center p-3 rounded-full bg-white shadow-md mb-4">
             <BookOpen size={24} style={{ color: THEME.primary }} />
           </div>
@@ -71,13 +87,15 @@ const PublicLessons = () => {
             A curated library of life lessons, hard-earned truths, and moments
             of clarity shared by the community.
           </p>
-        </div>
+        </motion.div>
 
-        {/* 2. SEARCH & FILTER BAR (Visual) */}
-        <div
-          className="max-w-4xl mx-auto mb-16 animate-fade-in-up"
-          style={{ animationDelay: "0.1s" }}
-        >
+        {/* SEARCH & FILTER BAR */}
+        <motion.div
+          className="max-w-4xl mx-auto mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.6 }}
+           >
           <div className="bg-white rounded-2xl shadow-xl shadow-[#1A2F23]/5 p-2 flex flex-col md:flex-row items-center gap-2 border border-gray-100">
             <div className="flex-1 flex items-center px-4 py-3 w-full">
               <Search size={20} className="text-gray-400 mr-3" />
@@ -99,9 +117,9 @@ const PublicLessons = () => {
               Search
             </button>
           </div>
-        </div>
+        </motion.div>
 
-        {/* 3. LESSON GRID */}
+        {/* LESSON GRID */}
         {loading ? (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader />
@@ -110,20 +128,37 @@ const PublicLessons = () => {
             </p>
           </div>
         ) : lessons.length > 0 ? (
-          <div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20 animate-fade-in-up"
-            style={{ animationDelay: "0.2s" }}
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.1,
+                },
+              },
+            }}
           >
             {lessons.map((lesson) => (
-              <LessonCard
+              <motion.div
                 key={lesson._id}
-                lesson={lesson}
-               user={currentUser || { isPremium: false }}   
-              />
+               variants={{
+                  hidden: { opacity: 0, y: 20 },
+                  visible: { opacity: 1, y: 0 },
+                }}
+              >
+                <LessonCard
+                  lesson={lesson}
+                  user={currentUser || { isPremium: false }}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         ) : (
-          /* Empty State */
+          
           <div className="text-center py-20 opacity-60">
             <h3 className="text-2xl font-serif text-gray-400 mb-2">
               The pages are blank.
@@ -133,21 +168,36 @@ const PublicLessons = () => {
         )}
       </div>
 
-      <style jsx>{`
-        @keyframes fade-in-up {
-          0% {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-in-up {
-          animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-      `}</style>
+       <div className="flex gap-1 flex-wrap justify-center">
+        {currentPage > 0 && (
+          <button
+            onClick={() => setCurrentPage(currentPage - 1)}
+            className={"btn text-[#1a2f23] border border-[#1a2f23]"}
+          >
+            Prev
+          </button>
+        )}
+        {[...Array(totalPages).keys()].map((i) => (
+          <button
+            onClick={() => setCurrentPage(i)}
+            className={`${
+              i === currentPage
+                ? "btn bg-[#1a2f23] text-white"
+                : "btn text-[#1a2f23] border border-[#1a2f23]"
+            }`}
+          >
+            {i}
+          </button>
+        ))}
+        {currentPage < totalPages - 1 && (
+          <button
+            onClick={() => setCurrentPage(currentPage + 1)}
+            className={"btn text-[#1a2f23] border border-[#1a2f23]"}
+          >
+            Next
+          </button>
+        )}
+      </div>
     </div>
   );
 };
