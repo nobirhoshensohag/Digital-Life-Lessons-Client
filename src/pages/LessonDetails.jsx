@@ -130,7 +130,7 @@ const LessonDetails = () => {
     axiosInstance
       .get(`/lessons?email=${lesson.email}`)
       .then((res) => {
-        setLessons(res.data);
+        setLessons(res.data.result);
         setLoading(false);
       })
       .catch(() => setLoading(false));

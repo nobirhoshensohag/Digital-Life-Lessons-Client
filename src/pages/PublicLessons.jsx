@@ -20,16 +20,33 @@ const PublicLessons = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
+  const [sort, setSort] = useState("");
+  const [filter, setFilter] = useState("");
+  const [category, setCategory] = useState("");
   const { user } = useAuth();
   const axiosInstance = useAxios();
   const [loading, setLoading] = useState(true);
   const limit = 6;
 
+   const handleSort = (e) => {
+    setSort(e.target.value);
+  };
+  const handleCategory = (e) => {
+    setCategory(e.target.value);
+  };
+  const handleFilter = (e) => {
+    setFilter(e.target.value);
+  };
+
   useEffect(() => {
     setLoading(true);
     axiosInstance
        .get(
-        `/lessons?isPrivate=false&limit=${limit}&skip=${currentPage * limit}`
+         `/lessons?isPrivate=false&limit=${limit}&skip=${
+          currentPage * limit
+        }&sort=${sort}&filter=${filter}&tone=${filter}&category=${encodeURIComponent(
+          category
+        )}`
       )
       .then((res) => {
           setLessons(res.data.result);
@@ -40,7 +57,7 @@ const PublicLessons = () => {
         console.log(page);
       })
       .catch(() => setLoading(false));
-   }, [axiosInstance, currentPage]);
+   }, [axiosInstance, currentPage, sort, filter, category]);
 
   useEffect(() => {
     if (!user?.email) return;
@@ -51,7 +68,7 @@ const PublicLessons = () => {
 
   return (
     <div
-      className="min-h-screen w-full relative py-20"
+      className="min-h-screen w-full relative py-12"
       style={{ backgroundColor: THEME.light }}
     >
       {/* Background */}
@@ -91,12 +108,13 @@ const PublicLessons = () => {
 
         {/* SEARCH & FILTER BAR */}
         <motion.div
-          className="max-w-4xl mx-auto mb-16"
+          className="max-w-7xl mx-auto mb-16"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1, duration: 0.6 }}
            >
-          <div className="bg-white rounded-2xl shadow-xl shadow-[#1A2F23]/5 p-2 flex flex-col md:flex-row items-center gap-2 border border-gray-100">
+          <div className="bg-white rounded-2xl shadow-xl shadow-[#1A2F23]/5 p-4 flex flex-col md:flex-row items-center gap-3 border border-gray-100">
+            {/* SEARCH INPUT */}
             <div className="flex-1 flex items-center px-4 py-3 w-full">
               <Search size={20} className="text-gray-400 mr-3" />
               <input
@@ -105,11 +123,42 @@ const PublicLessons = () => {
                 className="flex-1 bg-transparent border-none outline-none text-gray-700 placeholder:text-gray-400 font-medium"
               />
             </div>
-            <div className="h-px w-full md:h-8 md:w-px bg-gray-200"></div>
-            <button className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium transition-colors hover:bg-gray-50 text-gray-600">
-              <Filter size={18} />
-              <span>Filter</span>
-            </button>
+              {/* Category Dropdown */}
+            <select
+              onChange={(e) => handleCategory(e)}
+              className="border cursor-pointer rounded-xl px-4 py-3 text-gray-700 w-full md:w-auto"
+            >
+              <option value="">Filter: All</option>
+              <option value="Personal Growth">Personal Growth</option>
+              <option value="Career">Career</option>
+              <option value="Relationships">Relationships</option>
+              <option value="Mistakes Learned">Mistakes Learned</option>
+              <option value="Philosophy">Philosophy</option>
+            </select>
+
+            {/* FILTER DROPDOWN */}
+            <select
+              onChange={(e) => handleFilter(e)}
+              className="border cursor-pointer rounded-xl px-4 py-3 text-gray-700 w-full md:w-auto"
+            >
+              <option value="">Filter: All Emotional Tones</option>
+              <option value="Motivational">Motivational</option>
+              <option value="Sad">Sad</option>
+              <option value="Realization">Realization</option>
+              <option value="Gratitude">Gratitude</option>
+            </select>
+
+            {/* SORT DROPDOWN */}
+            <select
+              onClick={(e) => handleSort(e)}
+              className="border cursor-pointer rounded-xl px-4 py-3 text-gray-700 w-full md:w-auto"
+            >
+              <option value="postedAt">Sort: Newest</option>
+              <option value="favorites">Most Saved</option>
+              <option value="likes">Most Liked</option>
+            </select>
+
+            {/* SEARCH BUTTON */}
             <button
               className="w-full md:w-auto px-8 py-3 rounded-xl font-bold text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               style={{ backgroundColor: THEME.dark }}
