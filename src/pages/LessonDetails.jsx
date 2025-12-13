@@ -504,11 +504,10 @@ const LessonDetails = () => {
                   <p className="text-gray-500 mb-6">
                     Unlock this premium wisdom by upgrading your membership.
                   </p>
-                  <Link>
-                    <button className="w-full py-3 bg-[#D4C5A8] hover:bg-[#c3b290] text-[#1A2F23] font-bold rounded-xl transition-colors shadow-md cursor-pointer">
-                      Upgrade Membership
-                    </button>
-                  </Link>
+                  
+                  <button className="w-full py-3 bg-[#D4C5A8] hover:bg-[#c3b290] text-[#1A2F23] font-bold rounded-xl transition-colors shadow-md cursor-pointer">
+                    Upgrade Membership
+                  </button>
                 </div>
               </div>
             )}

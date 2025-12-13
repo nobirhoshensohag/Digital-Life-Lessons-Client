@@ -1,6 +1,7 @@
 import React from "react";
 import { Clock, ExternalLink, Lock, Sparkles, User, Crown } from "lucide-react";
 import { Link } from "react-router";
+import useAxios from "../../hooks/useAxios";
 
 const COLORS = {
   darkGreen: "#1A2F23",
@@ -20,6 +21,17 @@ const LessonCard = ({ lesson, user }) => {
   const isUserPremium = user?.isPremium === true;
 
   const isLocked = isLessonPremium && !isUserPremium;
+  const axiosInstance = useAxios();
+
+  const handlePayment = () => {
+    const paymentInfo = {
+      email: user.email,
+    };
+    axiosInstance.post("/create-checkout-session", paymentInfo).then((res) => {
+      console.log(res.data);
+      window.location.href = res.data.url;
+    });
+  };
 
   return (
     <div
@@ -55,14 +67,13 @@ const LessonCard = ({ lesson, user }) => {
             This lesson is exclusive for premium members. Upgrade to unlock.
           </p>
 
-           <Link>
-            <button
-              className="px-6 cursor-pointer py-3 rounded-xl text-sm font-bold uppercase shadow-lg"
-              style={{ backgroundColor: COLORS.gold, color: COLORS.darkGreen }}
-            >
-              Upgrade to View
-            </button>
-          </Link>
+             <button
+            onClick={handlePayment}
+            className="px-6 cursor-pointer py-3 rounded-xl text-sm font-bold uppercase shadow-lg"
+            style={{ backgroundColor: COLORS.gold, color: COLORS.darkGreen }}
+          >
+            Upgrade to View
+          </button>
         </div>
       )}
 

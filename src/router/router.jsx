@@ -9,6 +9,7 @@ import Contact from "../pages/Contact";
 import AddLessons from "../pages/ProtectedPages/AddLessons";
 import PrivateRoute from "../routes/PrivateRoute/PrivateRoute";
 import LessonDetails from "../pages/LessonDetails";
+import PaymentCancelled from "../pages/Payment/PaymentCancelled";
 
 export const router = createBrowserRouter([
   {
@@ -37,6 +38,14 @@ export const router = createBrowserRouter([
       {
         path: "/lesson-details/:id",
         element: <LessonDetails />,
+      },
+       {
+        path: "/payment-cancelled",
+        element: (
+          <PrivateRoute>
+            <PaymentCancelled />
+          </PrivateRoute>
+        ),
       },
     ],
   },
