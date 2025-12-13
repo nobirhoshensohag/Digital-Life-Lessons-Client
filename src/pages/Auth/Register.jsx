@@ -20,6 +20,7 @@ import useAxios from "../../hooks/useAxios"
 const Register = () => {
   const [showPass, setShowPass] = useState(false);
 const { createUser, updateUser, setUser } = useAuth();
+const [loading, setLoading] = useState(false);
   const axiosInstance = useAxios();
   const navigate = useNavigate();
   const {
@@ -29,6 +30,7 @@ const { createUser, updateUser, setUser } = useAuth();
   } = useForm();
    
   const handleRegister = (data) => {
+    setLoading(true);
     const profileImage = data.image[0];
     createUser(data.email, data.password)
       .then(() => {
@@ -55,16 +57,21 @@ const { createUser, updateUser, setUser } = useAuth();
                   isPremium: false,
                 };
 
-                setUser(newUser);
-                axiosInstance.post("/users", newUser).then((r) => {
-                  if (r.data.insertedId) {
-                    toast.success("Registration Successful");
-                    navigate("/");
-                  }
-                });
+                 axiosInstance
+                  .post("/users", { ...newUser, role: "user" })
+                  .then((r) => {
+                    if (r.data.insertedId) {
+                      setUser({ ...newUser, role: "user" });
+                      toast.success("Registration Successful");
+                      navigate("/");
+                    }
+                  });
               })
               .catch((e) => {
                 console.log(e);
+                 })
+              .finally(() => {
+                setLoading(false);
               });
           });
       })
@@ -221,9 +228,10 @@ const { createUser, updateUser, setUser } = useAuth();
           {/* Sign up Button */}
           <button
             type="submit"
+            disabled={loading}
             className="w-full cursor-pointer bg-[#8FA895] hover:bg-[#7D9483] text-white font-medium py-3.5 rounded-full transition-all duration-200 shadow-md hover:shadow-lg transform active:scale-[0.99]"
           >
-            Sign up
+            {loading ? "Creating User..." : " Sign up"}
           </button>
         </form>
         {/* Google Login */}

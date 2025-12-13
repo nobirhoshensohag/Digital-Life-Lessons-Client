@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams, Link } from "react-router";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { GiCancel } from "react-icons/gi";
+import { FaFlag, FaHeart, FaRegHeart } from "react-icons/fa";
 import { BsFillHandThumbsUpFill, BsHandThumbsUp } from "react-icons/bs";
 import {
   ArrowLeft,
@@ -18,6 +19,7 @@ import useAxios from "../hooks/useAxios";
 import useAuth from "../hooks/useAuth";
 import toast from "react-hot-toast";
 import ShareButton from "../components/Shared/ShareButton";
+import Swal from "sweetalert2";
 
 const LessonDetails = () => {
   const { id } = useParams();
@@ -43,8 +45,50 @@ const LessonDetails = () => {
   const [favoriteId, setFavoriteId] = useState("");
   const [newComment, setNewComment] = useState("");
   const [comments, setComments] = useState([]);
+   const reportModalRef = useRef(null);
 
-  useEffect(() => {}, []);
+  const handleModalOpen = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#1a2f23",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, report it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        reportModalRef.current.showModal();
+      }
+    });
+  };
+  const handleModalClose = () => {
+    reportModalRef.current.close();
+  };
+  const handleReport = (e) => {
+    e.preventDefault();
+    const reportInfo = {
+      postId: id,
+      reportedUserEmail: user.email,
+      reportReason: e.target.reportReason.value,
+      reportDetails: e.target.reportDetails.value,
+    };
+    axiosInstance.post("/reports", reportInfo).then((res) => {
+      e.target.reset();
+      reportModalRef.current.close();
+
+      if (res.data.insertedId) {
+        Swal.fire({
+          title: "Reported!",
+          text: "You reported this lesson.",
+          icon: "success",
+          confirmButtonColor: "#1a2f23",
+        });
+      }
+    });
+  };
+
+   //like
   const handleLikeAdd = () => {
     if (!user) return toast.error("You must be logged in");
 
@@ -68,7 +112,7 @@ const LessonDetails = () => {
       }
       });
   };
-
+    //remove like
   const handleLikeDelete = () => {
     axiosInstance.delete(`/likes/${likeId}`).then((res) => {
       setIsLiked(false);
@@ -78,7 +122,7 @@ const LessonDetails = () => {
       });
     });
   };
-
+    //add to favorites
   const handleFavoriteAdd = () => {
     if (!user) return toast.error("You must be logged in");
 
@@ -102,8 +146,10 @@ const LessonDetails = () => {
       }
      });
   };
+
+  //remove from favorites
   const handleFavoriteDelete = () => {
-    axiosInstance.delete(`/favorites/${favoriteId}`).then((res) => {
+     axiosInstance.delete(`/favorites/${favoriteId}`).then(() => {
       setIsFavorite(false);
       axiosInstance.get(`/lessons/${lesson._id}`).then((res) => {
         setFavorites(res.data.favorites);
@@ -112,6 +158,7 @@ const LessonDetails = () => {
     });
   };
 
+//get the lesson details
   useEffect(() => {
     axiosInstance
       .get(`/lessons/${id}`)
@@ -324,6 +371,83 @@ const LessonDetails = () => {
                 <div className="flex flex-col items-center">
                   <ShareButton />
                 </div>
+                   <button
+                  onClick={handleModalOpen}
+                  className="flex cursor-pointer items-center gap-2 bg-white/10 hover:bg-red-500/30 transition-colors rounded-full px-3 py-1 shadow-inner"
+                >
+                  <FaFlag size={20} className="text-red-700" />
+                </button>
+                {/* Open the modal using document.getElementById('ID').showModal() method */}
+
+                <dialog
+                  ref={reportModalRef}
+                  className="modal modal-bottom sm:modal-middle"
+                >
+                  <div className="modal-box">
+                    <div className="modal-action">
+                      <div method="dialog">
+                        <button
+                          className="cursor-pointer"
+                          onClick={handleModalClose}
+                        >
+                          <GiCancel size={24} color="gray" />
+                        </button>
+                      </div>
+                    </div>
+                    {/* REPORT FORM */}
+                    <form
+                      onSubmit={(e) => handleReport(e)}
+                      className="space-y-4"
+                    >
+                      {/* Reason Dropdown */}
+                      <div>
+                        <label className="font-semibold block mb-1">
+                          Reason
+                        </label>
+                        <select
+                          name="reportReason"
+                          className="w-full border border-gray-300 rounded-lg p-2"
+                        >
+                          <option value="">Select a reason</option>
+                          <option value="Inappropriate Content">
+                            Inappropriate Content
+                          </option>
+                          <option value="Hate Speech or Harassment">
+                            Hate Speech or Harassment
+                          </option>
+                          <option value="Misleading or False Information">
+                            Misleading or False Information
+                          </option>
+                          <option value="Spam or Promotional Content">
+                            Spam or Promotional Content
+                          </option>
+                          <option value="Sensitive or Disturbing Content">
+                            Sensitive or Disturbing Content
+                          </option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+
+                      {/* Additional Details */}
+                      <div>
+                        <label className="font-semibold block mb-1">
+                          Additional Details (optional)
+                        </label>
+                        <textarea
+                          name="reportDetails"
+                          placeholder="Write more details here..."
+                          className="w-full border border-gray-300 rounded-lg p-2"
+                          rows="4"
+                        ></textarea>
+                      </div>
+                      <div>
+                        <button className="bg-[#1a2f23] text-white px-4 rounded-lg py-2">
+                          Submit Report
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </dialog>
               </div>
             </div>
           </div>
@@ -380,9 +504,11 @@ const LessonDetails = () => {
                   <p className="text-gray-500 mb-6">
                     Unlock this premium wisdom by upgrading your membership.
                   </p>
-                  <button className="w-full py-3 bg-[#D4C5A8] hover:bg-[#c3b290] text-[#1A2F23] font-bold rounded-xl transition-colors shadow-md">
-                    Upgrade Membership
-                  </button>
+                  <Link>
+                    <button className="w-full py-3 bg-[#D4C5A8] hover:bg-[#c3b290] text-[#1A2F23] font-bold rounded-xl transition-colors shadow-md cursor-pointer">
+                      Upgrade Membership
+                    </button>
+                  </Link>
                 </div>
               </div>
             )}

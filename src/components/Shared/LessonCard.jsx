@@ -55,12 +55,14 @@ const LessonCard = ({ lesson, user }) => {
             This lesson is exclusive for premium members. Upgrade to unlock.
           </p>
 
-          <button
-            className="px-6 py-3 rounded-xl text-sm font-bold uppercase shadow-lg"
-            style={{ backgroundColor: COLORS.gold, color: COLORS.darkGreen }}
-          >
-            Upgrade to View
-          </button>
+           <Link>
+            <button
+              className="px-6 cursor-pointer py-3 rounded-xl text-sm font-bold uppercase shadow-lg"
+              style={{ backgroundColor: COLORS.gold, color: COLORS.darkGreen }}
+            >
+              Upgrade to View
+            </button>
+          </Link>
         </div>
       )}
 

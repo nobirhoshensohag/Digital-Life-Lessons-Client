@@ -20,6 +20,7 @@ const SocialLogin = () => {
             photoURL: result.user.photoURL,
             email: result.user.email,
             isPremium: false,
+            role: "user",
           })
           .then(() => {
             toast.success("Sign in successful");

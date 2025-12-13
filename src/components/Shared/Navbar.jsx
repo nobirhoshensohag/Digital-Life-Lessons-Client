@@ -115,7 +115,7 @@ const Navbar = () => {
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#7d9483",
+      confirmButtonColor: "#1a2f23",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, sign out!",
     }).then((result) => {
@@ -126,7 +126,7 @@ const Navbar = () => {
               title: "Signed Out!",
               text: "Your have been signed out.",
               icon: "success",
-              confirmButtonColor: "#7d9483",
+              confirmButtonColor: "#1a2f23",
             });
           })
           .catch((err) => {
